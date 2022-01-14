@@ -5,103 +5,98 @@ File: tic-tac-toe-game.py
 ==========================================================================================="""
 from termcolor import colored
 
-create_board = {'7': ' ' , '8': ' ' , '9': ' ' ,
-        '4': ' ' , '5': ' ' , '6': ' ' ,
-        '1': ' ' , '2': ' ' , '3': ' ' }
-board_keys = []
-for key in create_board:
-    board_keys.append(key)
+board = [ " ", " ", " ",
+        " ", " ", " ",
+        " ", " ", " "]
+X = colored("X", "blue", attrs=["bold"])
+O = colored("O", "red", attrs=["bold"])
+current_player = X
+winner = None
+game_running = True
 
-#Main Function
+#Main function to bring the whole batch of functions together to create a program.
 def main():
-    X = colored("X", "blue", attrs=["bold"])
-    O = colored("O", "red", attrs=["bold"])
-    turn = X
-    count = 0
-    example_board(X,O)
-    for i in range(10):
-        print()
-        display_board(create_board)
-        print()
-        move = input(f"It's your turn, {turn}. What is your move? ")        
-
-        if create_board[move] == ' ':
-            create_board[move] = turn
-            count += 1
-        else:
-            error_message = colored("That place is already filled, try again.", "cyan", attrs=["bold"])
-            print(error_message)
-            continue
-
-        # For every move over 5 moves the program will check for a win. 
-        if count >= 5:
-            if create_board['7'] == create_board['8'] == create_board['9'] != ' ': # across the top
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")                
-                break
-            elif create_board['4'] == create_board['5'] == create_board['6'] != ' ': # across the middle
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break
-            elif create_board['1'] == create_board['2'] == create_board['3'] != ' ': # across the bottom
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break
-            elif create_board['1'] == create_board['4'] == create_board['7'] != ' ': # down the left side
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break
-            elif create_board['2'] == create_board['5'] == create_board['8'] != ' ': # down the middle
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")                
-                break
-            elif create_board['3'] == create_board['6'] == create_board['9'] != ' ': # down the right side
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break 
-            elif create_board['7'] == create_board['5'] == create_board['3'] != ' ': # diagonal
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break
-            elif create_board['1'] == create_board['5'] == create_board['9'] != ' ': # diagonal
-                display_board(create_board)
-                print("\nGame Over.\n")                
-                print(f"**** Player {turn} won. ****")
-                break 
-
-        # If neither X nor O wins and the board is full, we'll declare the result as 'tie'.
-        if count >= 9:
-            print("\nGame Over.\n")                
-            tie = colored("It's a Tie!!!", "magenta", attrs=["bold"])
-            print(tie)
-            break
-        # How to change the player after every move.
-        if turn == X:
-            turn = O
-        else:
-            turn = X
-
-def display_board(board):
-    print(f"{board['7']}|{board['8']}|{board['9']}")
-    print('-+-+-')
-    print(f"{board['4']}|{board['5']}|{board['6']}")
-    print('-+-+-')
-    print(f"{board['1']}|{board['2']}|{board['3']}")
-
-def example_board(X,O):
-    print("\n7|8|9")
+    while game_running:
+        # print_board(board)
+        player_input(board)
+        print_board(board)
+        check_win(board)
+        check_tie(board)
+        switch_player()
+    print_board(board)
+#Print the game board
+def print_board(board):
+    print(f"\n{board[0]}|{board[1]}|{board[2]}")
     print("-+-+-")
-    print("4|5|6")
+    print(f"{board[3]}|{board[4]}|{board[5]}")
     print("-+-+-")
-    print("1|2|3\n")
-    print(f"Best played on a Number Pad.\n(Spots you choose to place {X} and {O} match how the example looks.)")
+    print(f"{board[6]}|{board[7]}|{board[8]}\n")
+print_board(board)
+#Take the player input
+def player_input(board):
+    global current_player
+    player = int(input("Enter a number 1-9 to choose a square: "))
+    if player >= 1 and player <= 9 and board[player - 1] == " ":
+        board[player - 1] = current_player
+    else:
+        print("\nOops, someone is already in that spot. You forfeit your turn.\nChoose better next time")
+#Check for win or tie
+def check_horizontal(board):
+    global winner
+    if board[0] == board[1] == board[2] and board[1] != " ":
+        winner = board[0]
+        return True
+    elif board[3] == board [4] == board[5] and board[3] != " ":
+        winner = board[3]
+        return True
+    elif board[6] == board [7] == board[7] and board[6] != " ":
+        winner = board[6]
+        return True
+
+def check_vertical(board):
+    global winner
+    if board[0] == board[3] == board[6] and board[0] != " ":
+        winner = board[0]
+        return True
+    elif board[1] == board[4] == board[7] and board[1] != " ":
+        winner = board[0]
+        return True
+    elif board[3] == board[5] == board[8] and board[3] != " ":
+        winner = board[0]
+        return True
+
+def check_diagonal(board):
+    global winner
+    if board[0] == board[4] == board[8] and board[0] != " ":
+        winner = board[0]
+        return True
+    elif board[2] == board[4] == board[6] and board[2] != " ":
+        winner = board[2]
+        return True
+    
+def check_tie(board):
+    global game_running
+    if " " not in board:
+        print_board(board)
+        print("The game was a tie!")
+        print("*****GAME-OVER*****")
+        game_running = False
+
+def check_win(board):
+    global game_running
+    if check_diagonal(board) or check_horizontal(board) or check_vertical(board):
+        print(f"The winner is player {winner}!")
+        print("*****GAME-OVER*****")
+        game_running = False
+
+#Switch the player
+def switch_player():
+    global current_player
+    if current_player == X:
+        current_player = O
+    else:
+        current_player = X
+
 #Call to main function "if" statment for testing purposes.
 if __name__ == "__main__":
     main()
